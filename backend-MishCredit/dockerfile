@@ -1,0 +1,26 @@
+# Use the official Node.js runtime as the base image
+FROM node:22-alpine
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Copy package.json and package-lock.json (if available)
+COPY package*.json ./
+
+# Install ALL dependencies (including devDependencies for build)
+RUN npm ci
+
+# Copy the rest of the application code
+COPY . .
+
+# Build the application (needs devDependencies)
+RUN npm run build
+
+# Remove devDependencies after build
+RUN npm ci --only=production && npm cache clean --force
+
+# Fixed: Use hardcoded port
+EXPOSE 5000
+
+# Define the command to run the application
+CMD ["npm", "run", "start:prod"]
