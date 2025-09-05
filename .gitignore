@@ -1,0 +1,79 @@
+# ============================
+# Node
+# ============================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# ============================
+# Build outputs
+# ============================
+dist/
+build/
+.tmp/
+.temp/
+.cache/
+.next/
+out/
+
+# ============================
+# Vite / React
+# ============================
+ 
+
+# ============================
+# Logs
+# ============================
+logs/
+*.log
+*.log.*
+lerna-debug.log
+.eslintcache
+
+# ============================
+ 
+
+# ============================
+# IDE / Editors
+# ============================
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# ============================
+# OS
+# ============================
+.DS_Store
+Thumbs.db
+
+# ============================
+# Coverage / Tests
+# ============================
+coverage/
+.nyc_output/
+jest-cache/
+jest-debug.log
+
+# ============================
+# Mongo / Data
+# ============================
+data/
+*.db
+*.mongo
+*.rdb
+dump/
+
+# ============================
+# Docker
+# ============================
+docker-compose.override.yml
+.docker/
