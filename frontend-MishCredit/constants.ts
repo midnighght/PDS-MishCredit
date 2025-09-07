@@ -21,7 +21,7 @@ export const API_REQUEST_ROUTE = Object.freeze({
 
 // Resource URLs
 export const RESOURCES = Object.freeze({
-  LOGO: '.public/LogoExample.jpeg',
+  LOGO: 'https://avatars.githubusercontent.com/u/64452194?v=4',
   VITE_LOGO: '/vite.svg',
 } as const);
 
