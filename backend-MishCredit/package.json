@@ -1,5 +1,5 @@
 {
-  "name": "backend-mishcredit",
+  "name": "backend-data-bank",
   "version": "0.0.1",
   "description": "",
   "author": "",
@@ -20,16 +20,15 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "@nestjs/common": "^11.1.6",
+    "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.2",
-    "@nestjs/core": "^11.1.6",
+    "@nestjs/core": "^11.0.1",
     "@nestjs/jwt": "^11.0.0",
     "@nestjs/mongoose": "^11.0.3",
     "@nestjs/passport": "^11.0.5",
-    "@nestjs/platform-express": "^11.1.6",
+    "@nestjs/platform-express": "^11.0.1",
     "@nestjs/throttler": "^6.4.0",
     "bcryptjs": "^3.0.2",
-    "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
     "cookie-parser": "^1.4.7",
     "helmet": "^8.1.0",
@@ -38,7 +37,7 @@
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "reflect-metadata": "^0.2.2",
-    "rxjs": "^7.8.2",
+    "rxjs": "^7.8.1",
     "winston": "^3.17.0"
   },
   "devDependencies": {
@@ -53,9 +52,7 @@
     "@types/node": "^22.18.1",
     "@types/passport-jwt": "^4.0.1",
     "@types/supertest": "^6.0.3",
-    "@typescript-eslint/eslint-plugin": "^8.42.0",
-    "@typescript-eslint/parser": "^8.42.0",
-    "eslint": "^9.35.0",
+    "eslint": "^9.18.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
     "globals": "^16.0.0",
