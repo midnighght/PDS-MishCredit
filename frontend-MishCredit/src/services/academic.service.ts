@@ -105,6 +105,7 @@ class AcademicService {
 
     return coursesByLevel;
   }
+  
 
   /**
    * Get course status for a specific course

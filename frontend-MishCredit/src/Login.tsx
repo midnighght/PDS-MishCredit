@@ -102,10 +102,10 @@ export default function Login() {
           {/* Header */}
           <div className="text-center">
             <h1 className="text-3xl font-extrabold text-gray-900 mb-2">
-              UCN Academic Portal
+              Mish Credit Portal
             </h1>
             <p className="text-sm text-gray-600">
-              Sign in to view your academic progress
+              Inicio de Sesión
             </p>
           </div>
 
@@ -125,9 +125,9 @@ export default function Login() {
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-medium text-black-700 mb-1"
+                className="block text-sm font-medium  text-gray-700 mb-1"
               >
-                Email Address
+                Email 
               </label>
                 <input
                 id="email"
@@ -141,7 +141,7 @@ export default function Login() {
                 ${validationErrors.email ? 'border-red-300' : 'border-gray-300'} ${
                   loading ? 'bg-gray-100' : 'bg-white'
                 } text-black`}
-                placeholder="Enter your email"
+                placeholder="example@email.com"
                 />
               {validationErrors.email && (
                 <p className="text-red-600 text-xs mt-1">
@@ -156,7 +156,7 @@ export default function Login() {
                 htmlFor="password"
                 className="block text-sm font-medium text-gray-700 mb-1"
               >
-                Password
+                Contraseña
               </label>
               <input
                 id="password"
@@ -170,7 +170,7 @@ export default function Login() {
                 ${validationErrors.password ? 'border-red-300' : 'border-gray-300'} ${
                   loading ? 'bg-gray-100' : 'bg-white'
                 } text-black `}
-                placeholder="Enter your password"
+                placeholder="********"
               />
               {validationErrors.password && (
                 <p className="text-red-600 text-xs mt-1">
@@ -213,14 +213,14 @@ export default function Login() {
                   </svg>
                 </div>
               ) : (
-                'Sign in'
+                'Ingresar'
               )}
             </button>
 
             {/* Test Users section (Development Only) */}
             <div className="pt-4 border-t border-gray-200">
               <p className="text-xs text-gray-500 mb-3 text-center">
-                Test Users (Dev)
+                Usuarios de prueba (Dev)
               </p>
               <div className="grid grid-cols-3 gap-2">
                 {TEST_USERS.map((user, index) => (

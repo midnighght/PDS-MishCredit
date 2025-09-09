@@ -34,11 +34,13 @@ export default function Dashboard() {
 
   const getCareerStats = (careerData: CareerAcademicData | undefined) => {
     if (!careerData) return null;
+    
     return academicService.calculateAcademicStats(
       careerData.malla,
       careerData.avance,
     );
   };
+  
 
   if (loading) {
     return (
@@ -74,15 +76,15 @@ export default function Dashboard() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
-              <h1 className="text-xl font-semibold text-gray-900">UCN Academic Portal</h1>
+              <h1 className="text-xl font-semibold text-gray-900">Portal MishCredit UCN </h1>
             </div>
             <div className="flex items-center space-x-4">
-              <span className="text-gray-700">Welcome, {user?.email}!</span>
+              <span className="text-gray-700">Hola de nuevo !, {user?.email}!</span>
               <button
                 onClick={logout}
                 className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md transition duration-200"
               >
-                Logout
+                Cerrar Sesión
               </button>
             </div>
           </div>
@@ -92,7 +94,7 @@ export default function Dashboard() {
       <main className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
         {/* User Info */}
         <div className="bg-white shadow rounded-lg p-6 mb-6">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Student Information</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">Información del estudiante</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <p className="text-sm font-medium text-gray-500">RUT</p>
@@ -119,7 +121,7 @@ export default function Dashboard() {
         {/* Careers */}
         {user?.carreras && (
           <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-gray-900">Your Careers</h2>
+            <h2 className="text-2xl font-bold text-gray-900">Carreras</h2>
             
             {user.carreras.map((career) => {
               const careerData = academicData?.academicData?.find(
@@ -132,7 +134,7 @@ export default function Dashboard() {
                   <div className="flex justify-between items-center mb-4">
                     <div>
                       <h3 className="text-xl font-semibold text-gray-900">{career.nombre}</h3>
-                      <p className="text-gray-600">Code: {career.codigo} | Catalog: {career.catalogo}</p>
+                      <p className="text-gray-600">Codigo: {career.codigo} | Catalogo: {career.catalogo}</p>
                     </div>
                     <button
                       onClick={() => setSelectedCareer(career)}
@@ -142,7 +144,7 @@ export default function Dashboard() {
                           : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                       }`}
                     >
-                      {selectedCareer?.codigo === career.codigo ? 'Selected' : 'Select'}
+                      {selectedCareer?.codigo === career.codigo ? 'Seleccionado' : 'Seleccionar'}
                     </button>
                   </div>
 
@@ -150,33 +152,33 @@ export default function Dashboard() {
                     <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                       <div className="text-center p-3 bg-blue-50 rounded-lg">
                         <p className="text-2xl font-bold text-blue-600">{stats.totalCourses}</p>
-                        <p className="text-sm text-gray-600">Total Courses</p>
+                        <p className="text-sm text-gray-600">Cursos Totales</p>
                       </div>
                       <div className="text-center p-3 bg-green-50 rounded-lg">
                         <p className="text-2xl font-bold text-green-600">{stats.approvedCourses}</p>
-                        <p className="text-sm text-gray-600">Approved</p>
+                        <p className="text-sm text-gray-600">Aprobados</p>
                       </div>
                       <div className="text-center p-3 bg-red-50 rounded-lg">
                         <p className="text-2xl font-bold text-red-600">{stats.failedCourses}</p>
-                        <p className="text-sm text-gray-600">Failed</p>
+                        <p className="text-sm text-gray-600">Fallidos</p>
                       </div>
                       <div className="text-center p-3 bg-yellow-50 rounded-lg">
                         <p className="text-2xl font-bold text-yellow-600">{stats.completionPercentage}%</p>
-                        <p className="text-sm text-gray-600">Progress</p>
+                        <p className="text-sm text-gray-600">Progreso</p>
                       </div>
                       <div className="text-center p-3 bg-purple-50 rounded-lg">
                         <p className="text-2xl font-bold text-purple-600">{stats.approvedCredits}/{stats.totalCredits}</p>
-                        <p className="text-sm text-gray-600">Credits</p>
+                        <p className="text-sm text-gray-600">Creditos</p>
                       </div>
                     </div>
                   )}
 
                   {!careerData && !academicData?.failedCareers?.find(f => f.career.codigo === career.codigo) && (
-                    <p className="text-gray-500 text-center py-4">Loading career data...</p>
+                    <p className="text-gray-500 text-center py-4">Cargando datos de la carrera...</p>
                   )}
 
                   {academicData?.failedCareers?.find(f => f.career.codigo === career.codigo) && (
-                    <p className="text-red-500 text-center py-4">Failed to load data for this career.</p>
+                    <p className="text-red-500 text-center py-4">Ha ocurrido un error cargando los datos de esta carrera.</p>
                   )}
                 </div>
               );
