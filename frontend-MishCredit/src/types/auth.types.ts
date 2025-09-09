@@ -1,72 +1,80 @@
-
-
-export interface User{
-    _id: string;
-    username: string;
-    email: string;
-}
-export interface AuthState{
-    user: User | null;
-    isAuthenticated: boolean;
-    isLoading : boolean;
-    error: string | null;
+export interface UserData {
+  rut: string;
+  email: string;
+  carreras: Career[];
 }
 
-// Redux-style state management pattern for authentication using TypeScript.
-// This is a discriminated union that defines all possible authentication actions:
+export interface Career {
+  codigo: string;
+  nombre: string;
+  catalogo: string;
+}
 
+// Updated Course interface to match API response
+export interface Course {
+  codigo: string;
+  asignatura: string; // Changed from 'nombre' to 'asignatura'
+  creditos: number;
+  nivel: number; // Changed from 'semestre' to 'nivel'
+  prereq: string; // Prerequisites as comma-separated string
+}
+
+// Updated StudentProgress interface to match API response
+export interface StudentProgress {
+  nrc: string;
+  period: string;
+  student: string;
+  course: string; // Course code
+  excluded: boolean;
+  inscriptionType: string;
+  status: string; // "APROBADO", "REPROBADO", etc.
+}
+
+export interface LoginResponse {
+  rut: string;
+  carreras: Career[];
+  error?: string;
+}
+
+// Auth State
+export interface AuthState {
+  isAuthenticated: boolean;
+  user: UserData | null;
+  loading: boolean;
+  error: string | null;
+}
+
+// Academic Data Types
+export interface CareerAcademicData {
+  career: Career;
+  malla: Course[];
+  avance: StudentProgress[];
+  careerCode: string;
+  catalog: string;
+}
+
+export type AcademicDataType = {
+  academicData: CareerAcademicData[];
+  failedCareers: Array<{
+    career: Career;
+    error: any;
+  }>;
+};
+
+// Auth Actions
 export type AuthAction =
-| {type : 'AUTH_START'} // Triggered when login/register begins (no payload needed)
-| {type: 'AUTH_SUCCESS'; payload: User}  // When authentication succeeds (carries User data)
-| {type: 'AUTH_ERROR'; payload: string}// When authentication fails (carries error message) 
-| {type: 'AUTH_LOGOUT'} // When user logs out
-| {type: 'CLEAR_ERROR'}; // To reset error state
+  | { type: 'LOGIN_START' }
+  | { type: 'LOGIN_SUCCESS'; payload: LoginResponse & { email: string } }
+  | { type: 'LOGIN_ERROR'; payload: string }
+  | { type: 'LOGOUT' }
+  | { type: 'CLEAR_ERROR' };
 
-
-
-/*
-AUTH CONTEXT TYPE: 
-
-This extends AuthState to include action methods. It's the complete contract 
-for your auth context, combining:
-
-State properties (from AuthState): user, isAuthenticated, isLoading, error
-Action methods: Functions to modify that state
-How They Work Together
-This follows the Action → Reducer → State pattern:
-
-Actions (AuthAction) describe what happened
-A reducer (not shown) processes actions and updates state
-Context (AuthContextType) provides both current state and dispatch methods
-
-*/
-
-export interface AuthContextType extends AuthState{
-    login: (email: string, password: string) => Promise<void>;
-    register: (username: string, email: string, password: string) => Promise<void>;
-    logout: () => void;
-    clearError: () => void;
-}
-
-/**
- * @string email
- * @string pass
- */
-export interface LoginCredentials {
-    email: string;
-    password: string;
-}
-export interface RegisterCredentials{
-    username: string;
-    email: string;
-    password:string;
-
-}
-/**
- * @interface User
- * @string access_token
- */
-export interface AuthResponse{
-    user: User ;
-    access_token: string;
+// Academic Statistics (calculated client-side)
+export interface AcademicStats {
+  totalCourses: number;
+  approvedCourses: number;
+  failedCourses: number;
+  completionPercentage: number;
+  totalCredits: number;
+  approvedCredits: number;
 }

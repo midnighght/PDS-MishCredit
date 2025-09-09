@@ -1,38 +1,83 @@
-import React, { useRef } from 'react';
-import { useAuth } from './hooks/useAuth.hook';
-import { RESOURCES } from '../constants';
+import { useState, useEffect } from 'react';
+import { useAuthContext } from './contexts/auth.context';
+import academicService from './services/academic.service';
+import type { Career, CareerAcademicData, AcademicDataType } from './types/auth.types';
 
-function Dashboard() {
-  const { user, logout } = useAuth();
-  const rotation = useRef(0);
+export default function Dashboard() {
+  const { user, logout } = useAuthContext();
+  const [academicData, setAcademicData] = useState<AcademicDataType | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [selectedCareer, setSelectedCareer] = useState<Career | null>(null);
 
-  const handleRotate = () => {
-    const img = document.getElementById("dashboardLogo");
-    if (img) {
-      rotation.current += 360;
-      img.style.transform = `rotate(${rotation.current}deg)`;
-      img.style.transition = "transform 1s ease-in-out";
+  useEffect(() => {
+    if (user && user.carreras && user.carreras.length > 0) {
+      loadAcademicData();
+      setSelectedCareer(user.carreras[0]);
+    }
+  }, [user]);
+
+  const loadAcademicData = async () => {
+    if (!user) return;
+    try {
+      setLoading(true);
+      setError(null);
+      const data = await academicService.getDashboradData(user.rut, user.carreras);
+      setAcademicData(data);
+    } catch (error: any) {
+      console.error('Failed to load academic data:', error);
+      setError(error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
+  const getCareerStats = (careerData: CareerAcademicData | undefined) => {
+    if (!careerData) return null;
+    return academicService.calculateAcademicStats(
+      careerData.malla,
+      careerData.avance,
+    );
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-indigo-600"></div>
+          <p className="mt-4 text-lg text-gray-600">Loading your academic data...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-600 text-lg">Error: {error}</p>
+          <button 
+            onClick={loadAcademicData}
+            className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-gray-100">
-      <nav className="bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 shadow-lg">
+    <div className="min-h-screen bg-gray-50">
+      {/* Navigation */}
+      <nav className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-4">
-              <img
-                id="dashboardLogo"
-                onClick={handleRotate}
-                className="w-10 h-10 rounded-full cursor-pointer hover:shadow-lg transition-shadow duration-200"
-                src={RESOURCES.LOGO}
-                alt="App Logo"
-                title="Click to rotate!"
-              />
-              <h1 className="text-xl font-semibold text-white">Dashboard</h1>
+            <div className="flex items-center">
+              <h1 className="text-xl font-semibold text-gray-900">UCN Academic Portal</h1>
             </div>
             <div className="flex items-center space-x-4">
-              <span className="text-white">Welcome, {user?.username}! 👋</span>
+              <span className="text-gray-700">Welcome, {user?.email}!</span>
               <button
                 onClick={logout}
                 className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md transition duration-200"
@@ -45,36 +90,100 @@ function Dashboard() {
       </nav>
 
       <main className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-        <div className="bg-white shadow rounded-lg p-6">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">User Profile</h2>
-          <dl className="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
+        {/* User Info */}
+        <div className="bg-white shadow rounded-lg p-6 mb-6">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">Student Information</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <dt className="text-sm font-medium text-gray-500">Username</dt>
-              <dd className="mt-1 text-sm text-gray-900">{user?.username}</dd>
+              <p className="text-sm font-medium text-gray-500">RUT</p>
+              <p className="text-lg text-gray-900">{user?.rut}</p>
             </div>
             <div>
-              <dt className="text-sm font-medium text-gray-500">Email</dt>
-              <dd className="mt-1 text-sm text-gray-900">{user?.email}</dd>
+              <p className="text-sm font-medium text-gray-500">Email</p>
+              <p className="text-lg text-gray-900">{user?.email}</p>
             </div>
-            <div>
-              <dt className="text-sm font-medium text-gray-500">User ID</dt>
-              <dd className="mt-1 text-sm text-gray-900">{user?._id}</dd>
-            </div>
-          </dl>
+          </div>
         </div>
 
-        {/* Fun rotating logo section */}
-        <div className="mt-8 bg-white shadow rounded-lg p-6 text-center">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">
-            Click the logo to make it spin! 🎯
-          </h3>
-          <p className="text-gray-600">
-            Rotation count: <span className="font-bold">{rotation.current / 360}</span> full spins
-          </p>
-        </div>
+        {/* Academic Data Summary */}
+        {academicData?.failedCareers && academicData.failedCareers.length > 0 && (
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+            <h3 className="text-yellow-800 font-medium">Warning</h3>
+            <p className="text-yellow-700 text-sm">
+              Could not load data for {academicData.failedCareers.length} career(s). 
+              This might be due to network issues or data availability.
+            </p>
+          </div>
+        )}
+
+        {/* Careers */}
+        {user?.carreras && (
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold text-gray-900">Your Careers</h2>
+            
+            {user.carreras.map((career) => {
+              const careerData = academicData?.academicData?.find(
+                data => data.career.codigo === career.codigo
+              );
+              const stats = getCareerStats(careerData);
+
+              return (
+                <div key={career.codigo} className="bg-white shadow rounded-lg p-6">
+                  <div className="flex justify-between items-center mb-4">
+                    <div>
+                      <h3 className="text-xl font-semibold text-gray-900">{career.nombre}</h3>
+                      <p className="text-gray-600">Code: {career.codigo} | Catalog: {career.catalogo}</p>
+                    </div>
+                    <button
+                      onClick={() => setSelectedCareer(career)}
+                      className={`px-4 py-2 rounded-md transition duration-200 ${
+                        selectedCareer?.codigo === career.codigo
+                          ? 'bg-indigo-600 text-white'
+                          : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                      }`}
+                    >
+                      {selectedCareer?.codigo === career.codigo ? 'Selected' : 'Select'}
+                    </button>
+                  </div>
+
+                  {stats && (
+                    <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                      <div className="text-center p-3 bg-blue-50 rounded-lg">
+                        <p className="text-2xl font-bold text-blue-600">{stats.totalCourses}</p>
+                        <p className="text-sm text-gray-600">Total Courses</p>
+                      </div>
+                      <div className="text-center p-3 bg-green-50 rounded-lg">
+                        <p className="text-2xl font-bold text-green-600">{stats.approvedCourses}</p>
+                        <p className="text-sm text-gray-600">Approved</p>
+                      </div>
+                      <div className="text-center p-3 bg-red-50 rounded-lg">
+                        <p className="text-2xl font-bold text-red-600">{stats.failedCourses}</p>
+                        <p className="text-sm text-gray-600">Failed</p>
+                      </div>
+                      <div className="text-center p-3 bg-yellow-50 rounded-lg">
+                        <p className="text-2xl font-bold text-yellow-600">{stats.completionPercentage}%</p>
+                        <p className="text-sm text-gray-600">Progress</p>
+                      </div>
+                      <div className="text-center p-3 bg-purple-50 rounded-lg">
+                        <p className="text-2xl font-bold text-purple-600">{stats.approvedCredits}/{stats.totalCredits}</p>
+                        <p className="text-sm text-gray-600">Credits</p>
+                      </div>
+                    </div>
+                  )}
+
+                  {!careerData && !academicData?.failedCareers?.find(f => f.career.codigo === career.codigo) && (
+                    <p className="text-gray-500 text-center py-4">Loading career data...</p>
+                  )}
+
+                  {academicData?.failedCareers?.find(f => f.career.codigo === career.codigo) && (
+                    <p className="text-red-500 text-center py-4">Failed to load data for this career.</p>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
       </main>
     </div>
   );
 }
-
-export default Dashboard;

@@ -1,18 +1,15 @@
 import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
- 
+import react from '@vitejs/plugin-react-swc'
 
+// https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
   server: {
-    host: '0.0.0.0',
-    port: 3000,
-    watch: {
-      usePolling: true,
-    },
+    port: parseInt(process.env.VITE_PORT || "3000"),
+    host: "0.0.0.0", // For Docker compatibility
   },
-  // Add this to resolve module conflicts
-  resolve: {
-    dedupe: ['react', 'react-dom', 'vite']
+  preview: {
+    port: parseInt(process.env.VITE_PORT || "3000"),
+    host: "0.0.0.0",
   }
 })

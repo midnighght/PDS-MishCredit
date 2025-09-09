@@ -1,50 +1,18 @@
 services:
-    
-    mongodb-service:
-        image: mongodb/mongodb-community-server:latest
-        container_name: mishcredit-mongodb
-        restart: unless-stopped
-        ports:
-            - "38130:27017"
-        volumes:
-            - mishcredit_mongodb:/data/db 
-        environment:
-            MONGO_INITDB_ROOT_USERNAME: mishcredit
-            MONGO_INITDB_ROOT_PASSWORD: password1234
-        networks:
-            - app-network
-    backend-mishcredit-service:
-        build: ./backend-mishcredit
-        container_name: backend-mishcredit
-        restart: unless-stopped
-        ports:
-            - "5000:5000"   
-        env_file:
-            - ./backend-mishcredit/.env
-        depends_on:
-            - mongodb-service
-        networks:
-            - app-network  # Add this so backend can communicate with frontend
+  backend:
+    build: ./backend-MishCredit
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./backend-MishCredit:/app
+      - /app/node_modules
 
-    frontend-mishcredit-service:
-        build:
-            context: ./frontend-mishcredit
-            dockerfile: Dockerfile
-        container_name: frontend-mishcredit
-        ports:
-            - "4000:3000"
-        restart: unless-stopped
-        env_file:
-            - ./frontend-mishcredit/.env
-        depends_on:
-            - backend-mishcredit-service
-        networks:
-            - app-network
-volumes:
-    mishcredit_mongodb:
-
-# docker-compose down --volumes --rmi all
- 
-networks:
-  app-network:
-    driver: bridge
+  frontend:
+    build: ./frontend-MishCredit
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend-MishCredit:/app
+      - /app/node_modules
+    depends_on:
+      - backend
