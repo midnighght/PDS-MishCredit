@@ -1,0 +1,19 @@
+# root ignore
+node_modules/
+**/node_modules/
+dist/
+**/dist/
+coverage/
+**/coverage/
+*.log
+*.tmp
+.DS_Store
+Thumbs.db
+# env files
+**/.env
+# build outputs
+frontend/dist/
+backend/dist/
+# editor
+.vscode/
+.idea/
