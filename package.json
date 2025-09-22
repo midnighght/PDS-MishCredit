@@ -1,0 +1,20 @@
+{
+  "name": "yio-malla-proyecto",
+  "private": true,
+  "version": "0.0.1",
+  "description": "Planificador UCN - monorepo",
+  "scripts": {
+    "dev:backend": "npm --prefix backend run start:dev",
+    "dev:frontend": "npm --prefix frontend run dev",
+    "build:backend": "npm --prefix backend run build",
+    "build:frontend": "npm --prefix frontend run build",
+    "test:backend": "npm --prefix backend test",
+    "lint:backend": "npm --prefix backend run lint",
+    "all:dev": "concurrently -n BE,FE -c blue,green \"npm:dev:backend\" \"npm:dev:frontend\"",
+    "docker:up": "docker compose up --build",
+    "docker:down": "docker compose down -v"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

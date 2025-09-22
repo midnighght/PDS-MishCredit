@@ -1,0 +1,107 @@
+### health
+GET http://localhost:3000/api/health
+
+### swagger ui (si esta instalado)
+GET http://localhost:3000/api/docs
+
+### login ucn via proxy
+GET http://localhost:3000/api/ucn/login?email=juan@example.com&password=1234
+
+### malla ucn via proxy
+GET http://localhost:3000/api/ucn/malla/8606/202320
+
+### avance ucn via proxy
+GET http://localhost:3000/api/ucn/avance?rut=333333333&codcarrera=8606
+
+### generar proyeccion sin oferta
+POST http://localhost:3000/api/proyecciones/generar
+Content-Type: application/json
+
+{
+  "rut": "333333333",
+  "codCarrera": "8606",
+  "catalogo": "202320",
+  "topeCreditos": 22,
+  "nivelObjetivo": 3,
+  "prioritarios": ["DCCB-00264"]
+}
+
+### generar proyeccion con oferta
+POST http://localhost:3000/api/proyecciones/generar-con-oferta
+Content-Type: application/json
+
+{
+  "rut": "333333333",
+  "codCarrera": "8606",
+  "catalogo": "202320",
+  "topeCreditos": 22,
+  "period": "202520",
+  "nivelObjetivo": 3,
+  "prioritarios": ["DCCB-00264"]
+}
+
+### guardar proyeccion y marcar favorita
+POST http://localhost:3000/api/proyecciones/guardar
+Content-Type: application/json
+
+{
+  "rut": "333333333",
+  "codCarrera": "8606",
+  "catalogo": "202320",
+  "topeCreditos": 22,
+  "nombre": "mi plan base",
+  "favorite": true
+}
+
+### listar mis proyecciones
+GET http://localhost:3000/api/proyecciones/mias?rut=333333333
+
+### set favorita
+PATCH http://localhost:3000/api/proyecciones/favorita/ID_AQUI
+Content-Type: application/json
+
+{
+  "rut": "333333333"
+}
+
+### borrar proyeccion
+DELETE http://localhost:3000/api/proyecciones/ID_AQUI?rut=333333333
+
+### demanda agregada basada en favoritas por codigo
+GET http://localhost:3000/api/proyecciones/demanda/agregada?codCarrera=8606
+
+### demanda agregada por nrc
+GET http://localhost:3000/api/proyecciones/demanda/agregada?codCarrera=8606&por=nrc
+
+### oferta cargar csv
+POST http://localhost:3000/api/oferta/cargar
+Content-Type: application/json
+
+{
+  "csv": "period,nrc,course,codigoparalelo,dia,inicio,fin,sala,cupos\n202520,21943,DCCB-00264,A1,LU,08:00,09:20,A-101,60\n202520,21943,DCCB-00264,A1,MI,08:00,09:20,A-101,60\n202520,21944,DCCB-00264,B1,LU,09:30,10:50,A-102,40"
+}
+
+### oferta listar por curso y periodo
+GET http://localhost:3000/api/oferta/listar?course=DCCB-00264&period=202520
+### renombrar proyeccion
+PATCH http://localhost:3000/api/proyecciones/NUEVO_ID/nombre
+Content-Type: application/json
+
+{
+  "rut": "333333333",
+  "nombre": "mi plan favorito"
+}
+
+### generar opciones sin oferta
+POST http://localhost:3000/api/proyecciones/generar-opciones
+Content-Type: application/json
+
+{
+  "rut": "333333333",
+  "codCarrera": "8606",
+  "catalogo": "202320",
+  "topeCreditos": 22,
+  "nivelObjetivo": 3,
+  "prioritarios": ["DCCB-00264"],
+  "maxOptions": 5
+}
