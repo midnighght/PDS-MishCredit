@@ -8,52 +8,52 @@
 
 ## Requisitos
 - Node.js 20+
-- MongoDB 7+ (o Docker)
+- MongoDB 7+ (local o contenedor Docker)
 
-## Configuracion
+## Puesta en marcha rapida
+1. Clona el repo y entra a la carpeta `yio Malla proyecto`.
+2. Instala dependencias de la raiz (necesarias para los scripts del monorepo): `npm install`.
+3. Instala dependencias del backend y del frontend en un solo paso: `npm run bootstrap`.
+4. Copia los archivos de entorno base (solo lo hace si faltan): `npm run setup`.
+5. Ajusta los valores generados en `backend/.env` y `frontend/.env` si lo necesitas.
+6. Asegura que MongoDB este corriendo (`mongodb://localhost:27017/planificador` por defecto) o usa Docker (`docker compose up --build`).
+7. Levanta los servicios:
+   - Backend: `npm run dev:backend`
+   - Frontend: `npm run dev:frontend`
+   - Ambos al mismo tiempo: `npm run all:dev`
+
+> Tip: el backend expone Swagger en `http://localhost:3000/api/docs` cuando `SWAGGER_ENABLED=true`.
+
+## Configuracion de entorno
 ### Backend
-1. Copia `backend/.env.example` a `backend/.env` y ajusta:
-   - `MONGO_URI` cadena de conexion
-   - `ALLOWED_ORIGINS` (por defecto `http://localhost:5173,http://localhost:8080`)
-   - `USE_STUBS=true` para trabajar offline
-   - `ADMIN_API_KEY` clave para endpoints admin
-   - `USE_BACKUP_FALLBACK=true` para servir respaldos si UCN falla
-   - `SWAGGER_ENABLED=true` para ver `/api/docs` en dev
+`backend/.env.example` ya viene con valores pensados para desarrollo offline (`USE_STUBS=true`). Asegurate de definir:
+- `MONGO_URI`: cadena de conexion (por defecto local).
+- `ALLOWED_ORIGINS`: agrega URLs adicionales de frontends si Vite usa otro puerto.
+- `ADMIN_API_KEY`: clave para los endpoints protegidos de respaldo y oferta.
+- `USE_BACKUP_FALLBACK=true` si quieres servir respaldos cuando las APIs UCN fallen.
 
 ### Frontend
-1. Copia `frontend/.env.example` a `frontend/.env` (por defecto `VITE_API_BASE=http://localhost:3000/api`)
+`frontend/.env.example` apunta al backend local (`VITE_API_BASE=http://localhost:3000/api`). Ajusta si cambiaste puerto o URL.
 
-## Ejecutar en desarrollo
-- Local
-  - Backend: `cd backend && npm install && npm run start:dev`
-  - Frontend: `cd frontend && npm install && npm run dev` → abre `http://localhost:5173`
-  - Desde la raiz: `npm install && npm run all:dev` (levanta ambos)
-- Docker
-  - `docker compose up --build`
-  - Frontend: `http://localhost:8080` | Backend: `http://localhost:3000`
+## Ejecutar con Docker
+- `docker compose up --build`
+- Frontend: `http://localhost:8080`
+- Backend: `http://localhost:3000`
 
 ## Uso (UI)
-1) Login (demo)
-- Ingresa RUT y password (ver “Credenciales demo”). Al autenticar se listan carreras/catalogos del estudiante (elige una).
-- “Olvide mi contraseña”: valida RUT + email y muestra mensaje de exito (solo demostrativo, no envia correos).
-- Acceso administrador esta en la pagina de login (no en la interfaz del estudiante).
-
-2) Plan (/plan)
-- Define tope de creditos y genera la seleccion principal (prioriza reprobados, luego atrasados segun nivel objetivo y luego prioritarios, siempre respetando prerrequisitos y tope).
-- Debajo de la seleccion principal veras:
-  - “Malla (selector de prioritarios)”: marca cursos y agregalos a la lista de prioritarios.
-  - “Opciones sugeridas”: genera alternativas sin oferta. Se muestran opciones que incluyen tus cursos prioritarios y mantienen reprobados cuando aplica. Cada curso se muestra como:
-    - `COD · Asignatura (creditos) [prioridad, reprobado]` (sin [PENDIENTE]).
-- Guarda la proyeccion (o como favorita).
-
-3) Mis proyecciones (/proyecciones)
-- Lista, expande “Ver malla” para ver cursos y creditos, marca favorita y borra. Puedes renombrar cada proyeccion.
-
-4) Demanda (/demanda)
-- Ver demanda agregada por codigo o por NRC (solo favoritas).
-
-5) Admin y oferta
-- En /admin ingresa `X-ADMIN-KEY` para acceder a carga de oferta CSV en /oferta (solo admin). En esta demo la generacion “con oferta” esta deshabilitada.
+1. **Login demo**
+   - Ingresa correo y password (ver credenciales demo). Se listan las carreras/catalogos asociados.
+   - "Olvide mi contrasena" valida el RUT y devuelve un mensaje (no envia correos reales).
+   - Acceso administrador disponible desde la misma pantalla de login.
+2. **Plan (/plan)**
+   - Define tope de creditos y genera la seleccion principal (prioriza reprobados, luego atrasados segun nivel objetivo y luego prioritarios, respetando prerrequisitos).
+   - Desde la vista puedes marcar prioritarios y generar opciones alternativas.
+3. **Mis proyecciones (/proyecciones)**
+   - Lista proyecciones guardadas, expande la malla, marca favoritas, renombra o elimina.
+4. **Demanda (/demanda)**
+   - Muestra demanda agregada por codigo o por NRC (solo desde favoritas).
+5. **Admin / oferta**
+   - En `/admin` ingresa la cabecera `X-ADMIN-KEY` configurada para cargar oferta CSV en `/oferta`.
 
 ## Credenciales demo
 - Estudiante 1: rut `333333333`, email `juan@example.com`, password `1234` (ICCI 201610)
@@ -65,8 +65,9 @@
 - Auth (demo): `POST /api/auth/login`, `POST /api/auth/forgot`
 - UCN (proxy): `GET /api/ucn/malla/:cod/:catalogo`, `GET /api/ucn/avance?rut&codcarrera`
 - Proyecciones: generar / generar-opciones / guardar / favorita / renombrar / borrar / demanda
-- Admin: oferta CSV y respaldos UCN (requiere `X-ADMIN-KEY`)
+- Admin: carga de oferta CSV y respaldos UCN (requiere `X-ADMIN-KEY`)
 
 ## Problemas comunes
-- Si Vite usa otro puerto, abre la URL “Local: …” que imprime y agrega ese origen a `ALLOWED_ORIGINS` si es necesario.
-- Si Mongo no levanta, usa Docker o revisa `MONGO_URI`.
+- Si Vite usa otro puerto, abre la URL que imprime `npm run dev:frontend` y agregala en `ALLOWED_ORIGINS`.
+- Si MongoDB no levanta, revisa `MONGO_URI` o usa Docker.
+- Si al iniciar el backend falta alguna variable, revisa `backend/.env` o vuelve a ejecutar `npm run setup`.
