@@ -1,8 +1,13 @@
-// controlador de autenticacion demo sin acentos ni punto final
+// controlador de autenticacion demo actualizado a email para login y rut para recuperar
 import { BadRequestException, Body, Controller, Post } from '@nestjs/common';
 
 type Carrera = { codigo: string; nombre: string; catalogo: string };
-type User = { rut: string; email: string; password: string; carreras: Carrera[] };
+type User = {
+  rut: string;
+  email: string;
+  password: string;
+  carreras: Carrera[];
+};
 
 const demoUsers: User[] = [
   {
@@ -28,21 +33,25 @@ const demoUsers: User[] = [
 @Controller('auth')
 export class AuthController {
   @Post('login')
-  login(@Body() body: { rut?: string; password?: string }) {
-    const rut = (body.rut || '').trim();
+  login(@Body() body: { email?: string; password?: string }) {
+    const email = (body.email || '').trim().toLowerCase();
     const password = (body.password || '').trim();
-    const user = demoUsers.find((u) => u.rut === rut && u.password === password);
+    const user = demoUsers.find(
+      (u) => u.email.toLowerCase() === email && u.password === password,
+    );
     if (!user) throw new BadRequestException('credenciales invalidas');
     return { rut: user.rut, carreras: user.carreras };
   }
 
   @Post('forgot')
-  forgot(@Body() body: { rut?: string; email?: string }) {
+  forgot(@Body() body: { rut?: string }) {
     const rut = (body.rut || '').trim();
-    const email = (body.email || '').trim().toLowerCase();
-    const user = demoUsers.find((u) => u.rut === rut && u.email.toLowerCase() === email);
-    if (!user) throw new BadRequestException('rut o email no coinciden');
-    return { ok: true, message: 'se envio un correo temporal' };
+    if (!rut) throw new BadRequestException('rut requerido');
+    const user = demoUsers.find((u) => u.rut === rut);
+    if (!user) throw new BadRequestException('rut no registrado');
+    return {
+      ok: true,
+      message: `se envio un correo temporal a ${user.email}`,
+    };
   }
 }
-

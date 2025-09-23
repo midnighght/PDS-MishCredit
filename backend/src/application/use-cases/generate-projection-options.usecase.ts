@@ -20,11 +20,18 @@ export class GenerateProjectionOptionsUseCase {
     prioritarios?: string[];
     maxOptions?: number;
   }): Promise<{ opciones: ProjectionResult[] }> {
-    const mallaRaw = await this.mallasGw.malla(params.codCarrera, params.catalogo);
+    const mallaRaw = await this.mallasGw.malla(
+      params.codCarrera,
+      params.catalogo,
+    );
     const avanceRaw = await this.avanceGw.avance(params.rut, params.codCarrera);
 
     // parse functions from generate-projection.usecase
-    const s = (v: unknown) => (typeof v === 'string' ? v : String(v ?? ''));
+    const s = (v: unknown) => {
+      if (typeof v === 'string') return v;
+      if (typeof v === 'number' || typeof v === 'boolean') return String(v);
+      return '';
+    };
     const n = (v: unknown) => {
       const x = Number(v);
       return Number.isFinite(x) ? x : 0;
@@ -74,4 +81,3 @@ export class GenerateProjectionOptionsUseCase {
     return { opciones };
   }
 }
-
