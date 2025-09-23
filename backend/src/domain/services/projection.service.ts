@@ -1,33 +1,9 @@
 // servicio de dominio que selecciona cursos segun reglas sin acentos ni punto final
 import type { AvanceItem } from '../entities/avance.entity';
 import type { Course } from '../entities/course.entity';
+import { ProjectionInput, ProjectionResult, ProjectionCourse } from './projections.interfaces';
 
-export interface ProjectionInput {
-  malla: Course[];
-  avance: AvanceItem[];
-  topeCreditos: number;
-  nivelObjetivo?: number; // semestre objetivo declarado por el usuario (1..n)
-  prioritarios?: string[]; // codigos de cursos a priorizar si cumplen reglas
-}
 
-export interface ProjectionCourse {
-  codigo: string;
-  asignatura: string;
-  creditos: number;
-  nivel: number;
-  motivo: 'REPROBADO' | 'PENDIENTE';
-  nrc?: string; // <- agregado para no usar any en otros archivos
-}
-
-export interface ProjectionResult {
-  seleccion: ProjectionCourse[];
-  totalCreditos: number;
-  reglas: {
-    topeCreditos: number;
-    priorizaReprobados: true;
-    verificaPrereq: true;
-  };
-}
 
 export class ProjectionService {
   static buildOptions(
@@ -241,3 +217,5 @@ export class ProjectionService {
     };
   }
 }
+export type { ProjectionResult };
+

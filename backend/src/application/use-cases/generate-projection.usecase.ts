@@ -7,6 +7,7 @@ import {
   type ProjectionResult,
 } from '../../domain/services/projection.service';
 import { AvanceGateway, MallasGateway } from '../../infra/ucn/ucn.gateways';
+import { StudentProjection } from './uses-cases.interfaces';
 
 // helpers seguros para parsear unknown y evitar no-base-to-string
 function s(v: unknown): string {
@@ -61,6 +62,7 @@ function parseAvance(data: unknown): AvanceItem[] {
   });
 }
 
+
 @Injectable()
 export class GenerateProjectionUseCase {
   constructor(
@@ -68,14 +70,7 @@ export class GenerateProjectionUseCase {
     private readonly avanceGw: AvanceGateway,
   ) {}
 
-  async exec(params: {
-    rut: string;
-    codCarrera: string;
-    catalogo: string;
-    topeCreditos: number;
-    nivelObjetivo?: number;
-    prioritarios?: string[];
-  }): Promise<ProjectionResult> {
+  async exec(params: StudentProjection): Promise<ProjectionResult> {
     const mallaRaw = await this.mallasGw.malla(
       params.codCarrera,
       params.catalogo,

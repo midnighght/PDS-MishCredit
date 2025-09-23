@@ -3,6 +3,8 @@ import { Injectable } from '@nestjs/common';
 import type { ProjectionResult } from '../../domain/services/projection.service';
 import { ProjectionService } from '../../domain/services/projection.service';
 import { AvanceGateway, MallasGateway } from '../../infra/ucn/ucn.gateways';
+import { StudentsOptionsProjections } from './uses-cases.interfaces';
+
 
 @Injectable()
 export class GenerateProjectionOptionsUseCase {
@@ -11,15 +13,7 @@ export class GenerateProjectionOptionsUseCase {
     private readonly avanceGw: AvanceGateway,
   ) {}
 
-  async exec(params: {
-    rut: string;
-    codCarrera: string;
-    catalogo: string;
-    topeCreditos: number;
-    nivelObjetivo?: number;
-    prioritarios?: string[];
-    maxOptions?: number;
-  }): Promise<{ opciones: ProjectionResult[] }> {
+  async exec(params: StudentsOptionsProjections): Promise<{ opciones: ProjectionResult[] }> {
     const mallaRaw = await this.mallasGw.malla(
       params.codCarrera,
       params.catalogo,

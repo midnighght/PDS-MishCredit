@@ -4,6 +4,8 @@ import type { OfferParallel } from '../../domain/entities/offer.entity';
 import { ScheduleService } from '../../domain/services/schedule.service';
 import { OfferRepository } from '../../infra/db/offer.repository';
 import { GenerateProjectionUseCase } from './generate-projection.usecase';
+import { StudentOfferProjection } from './uses-cases.interfaces';
+
 
 @Injectable()
 export class GenerateProjectionWithOfferUseCase {
@@ -12,15 +14,7 @@ export class GenerateProjectionWithOfferUseCase {
     private readonly offers: OfferRepository,
   ) {}
 
-  async exec(params: {
-    rut: string;
-    codCarrera: string;
-    catalogo: string;
-    topeCreditos: number;
-    period: string;
-    nivelObjetivo?: number;
-    prioritarios?: string[];
-  }) {
+  async exec(params: StudentOfferProjection) {
     const baseProj = await this.base.exec({
       rut: params.rut,
       codCarrera: params.codCarrera,
