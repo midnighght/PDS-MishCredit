@@ -9,14 +9,9 @@ services:
   backend:
     build:
       context: ./backend
-    environment:
-      - MONGO_URI=mongodb://mongo:27017/planificador
-      - PORT=3000
-      - UCN_BASE_PUCLARO=${UCN_BASE_PUCLARO}
-      - UCN_BASE_HAWAII=${UCN_BASE_HAWAII}
-      - HAWAII_AUTH=${HAWAII_AUTH}
-      - USE_STUBS=${USE_STUBS:-true}
-      - ALLOWED_ORIGINS=${ALLOWED_ORIGINS:-http://localhost:8080}
+    env_file:
+      - ./backend/.env
+
     ports:
       - "3000:3000"
     depends_on:
@@ -24,6 +19,8 @@ services:
   frontend:
     build:
       context: ./frontend
+    env_file:
+      - ./frontend/.env
     ports:
       - "8080:80"
     depends_on:
