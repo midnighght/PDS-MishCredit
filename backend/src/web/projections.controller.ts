@@ -72,7 +72,9 @@ export class ProjectionsController {
   }
 
   @Post('generar-opciones')
-  @ApiOperation({ summary: 'Generar varias opciones de proyeccion (sin oferta)' })
+  @ApiOperation({
+    summary: 'Generar varias opciones de proyeccion (sin oferta)',
+  })
   @ApiBody({ type: GenerarProyeccionDto })
   generarOpciones(@Body() dto: GenerarProyeccionDto & { maxOptions?: number }) {
     return this.usecaseOptions.exec(dto);

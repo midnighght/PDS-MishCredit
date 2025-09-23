@@ -2,7 +2,12 @@
 import { BadRequestException, Body, Controller, Post } from '@nestjs/common';
 
 type Carrera = { codigo: string; nombre: string; catalogo: string };
-type User = { rut: string; email: string; password: string; carreras: Carrera[] };
+type User = {
+  rut: string;
+  email: string;
+  password: string;
+  carreras: Carrera[];
+};
 
 const demoUsers: User[] = [
   {
@@ -50,4 +55,3 @@ export class AuthController {
     };
   }
 }
-

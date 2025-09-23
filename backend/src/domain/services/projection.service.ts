@@ -65,9 +65,7 @@ export class ProjectionService {
       )
       .map((c) => {
         const isReprob = reprobados.has(c.codigo);
-        const isBacklog = Boolean(
-          nivelObjetivo && c.nivel < (nivelObjetivo as number),
-        );
+        const isBacklog = Boolean(nivelObjetivo && c.nivel < nivelObjetivo);
         const isPrio = prioritarios.has(c.codigo);
         const rank = isReprob ? 0 : isBacklog ? 1 : isPrio ? 2 : 3;
         return {
@@ -86,15 +84,18 @@ export class ProjectionService {
       });
 
     // generar variantes saltando uno a uno de la base
-    for (let i = 0; i < base.seleccion.length && opciones.length < maxOptions; i++) {
+    for (
+      let i = 0;
+      i < base.seleccion.length && opciones.length < maxOptions;
+      i++
+    ) {
       const skipCode = base.seleccion[i].codigo;
       let total = 0;
       const pick: ProjectionCourse[] = [];
       for (const c of candidatos) {
         if (c.codigo === skipCode) continue;
         if (total + c.creditos <= tope) {
-          const { _rank, ...rest } = c as ProjectionCourse & { _rank?: number };
-          pick.push(rest as ProjectionCourse);
+          pick.push(ProjectionService.stripRank(c));
           total += c.creditos;
         }
         if (total >= tope) break;
@@ -123,14 +124,12 @@ export class ProjectionService {
       const pick: ProjectionCourse[] = [];
       // incluir prioritario primero
       if (cand.creditos > tope) continue;
-      const { _rank: _r1, ...restP } = cand as ProjectionCourse & { _rank?: number };
-      pick.push(restP as ProjectionCourse);
+      pick.push(ProjectionService.stripRank(cand));
       total += cand.creditos;
       for (const c of candidatos) {
         if (c.codigo === code) continue;
         if (total + c.creditos <= tope) {
-          const { _rank, ...rest } = c as ProjectionCourse & { _rank?: number };
-          pick.push(rest as ProjectionCourse);
+          pick.push(ProjectionService.stripRank(c));
           total += c.creditos;
         }
         if (total >= tope) break;
@@ -141,12 +140,24 @@ export class ProjectionService {
           opt.seleccion.every((p, idx) => p.codigo === pick[idx].codigo),
       );
       if (!dup) {
-        opciones.push({ seleccion: pick, totalCreditos: total, reglas: base.reglas });
+        opciones.push({
+          seleccion: pick,
+          totalCreditos: total,
+          reglas: base.reglas,
+        });
       }
     }
 
     return opciones;
   }
+
+  private static stripRank(
+    course: ProjectionCourse & { _rank?: number },
+  ): ProjectionCourse {
+    const { codigo, asignatura, creditos, nivel, motivo, nrc } = course;
+    return { codigo, asignatura, creditos, nivel, motivo, nrc };
+  }
+
   static hasPrereqs(course: Course, aprobados: Set<string>): boolean {
     const p = (course.prereq || '').trim();
     if (!p) return true;
@@ -188,9 +199,7 @@ export class ProjectionService {
       )
       .map((c) => {
         const isReprob = reprobados.has(c.codigo);
-        const isBacklog = Boolean(
-          nivelObjetivo && c.nivel < (nivelObjetivo as number),
-        );
+        const isBacklog = Boolean(nivelObjetivo && c.nivel < nivelObjetivo);
         const isPrio = prioritarios.has(c.codigo);
         // ranking: 0 reprobados, 1 backlog pendiente, 2 prioritarios, 3 resto
         const rank = isReprob ? 0 : isBacklog ? 1 : isPrio ? 2 : 3;
@@ -215,9 +224,7 @@ export class ProjectionService {
     for (const c of candidatos) {
       if (total + c.creditos <= tope) {
         // quitar campo auxiliar
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { _rank, ...rest } = c as ProjectionCourse & { _rank?: number };
-        seleccion.push(rest as ProjectionCourse);
+        seleccion.push(ProjectionService.stripRank(c));
         total += c.creditos;
       }
       if (total >= tope) break;
